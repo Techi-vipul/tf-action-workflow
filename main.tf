@@ -15,7 +15,7 @@ provider "aws" {
 
 // Create a Local Module
 
-module "myec2mdule" {
+module "tfmodule" {
   count = 2
   source  = "app.terraform.io/Terraform-June-Learning/tfmodule/aws"
   version = "1.0.0"
