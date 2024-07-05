@@ -13,7 +13,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-// Create a Local Module
+// Call a Terraform Cloud Module
 
 module "tfmodule" {
   count = 2
@@ -24,11 +24,11 @@ module "tfmodule" {
 }
 // for printing output
 output "public_ip" {
-  value = module.myec2mdule[0].ec2_public_ip
+  value = module.tfmodule[0].ec2_public_ip
 }
 output "private_ip" {
-  value = module.myec2mdule[0].ec2_private_ip
+  value = module.tfmodule[0].ec2_private_ip
 }
 output "dns_name" {
-  value = module.myec2mdule[0].ec2_public_dns
+  value = module.tfmodule[0].ec2_public_dns
 }
