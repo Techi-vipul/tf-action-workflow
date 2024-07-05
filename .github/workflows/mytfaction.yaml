@@ -1,0 +1,40 @@
+name: "AWS Terraform workflow"
+on:
+  workflow_dispatch: # Parameterization to make a selection of apply or destroy.
+    inputs:
+      TFACTION:
+        description: "Terraform Action"
+        default: "apply"
+        required: true
+        type: choice
+        options:
+         - "apply"
+         - "destroy"
+    # Code checkout
+jobs:
+  tfrun:
+     runs-on: ubuntu-latest
+     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+# Setup terraform CLI with TF_API_TOKEN
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.8.5
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+# Initialize terraform
+      - name: Terraform Init
+        run: terraform  init
+# Generates an execution plan for Terraform
+      - name: Terraform Plan
+        run: terraform  plan -input=false
+# Apply the plan if apply parameter selected during run.
+      - name: Terraform Apply
+        if: ${{ github.event.inputs.TFACTION == 'apply' }}
+        run: terraform  apply --auto-approve -input=false
+# Destroy the infra if destroy parameter selected during run.
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.TFACTION == 'destroy' }}
+        run: terraform destroy --auto-approve -input=false
+        working-directory: tfroot
